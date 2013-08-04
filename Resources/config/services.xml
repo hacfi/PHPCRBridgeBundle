@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="phpcr_bridge.cache_dir">%kernel.cache_dir%/phpcr_bridge</parameter>
+        <parameter key="phpcr_bridge.simple_annotation_reader.class">Doctrine\Common\Annotations\SimpleAnnotationReader</parameter>
+        <parameter key="phpcr_bridge.annotation_cache.class">Doctrine\Common\Cache\PhpFileCache</parameter>
+        <parameter key="phpcr_bridge.cached_annotation_reader.class">Doctrine\Common\Annotations\CachedReader</parameter>
+        <parameter key="phpcr_bridge.metadata.provider.class">hacfi\PHPCRBridgeBundle\Mapping\Driver\AnnotationDriver</parameter>
+        <parameter key="phpcr_bridge.entity.event_subscriber.class">hacfi\PHPCRBridgeBundle\EventListener\EntityEventSubscriber</parameter>
+        <parameter key="phpcr_bridge.document.event_subscriber.class">hacfi\PHPCRBridgeBundle\EventListener\DocumentEventSubscriber</parameter>
+    </parameters>
+
+    <services>
+        <service id="phpcr_bridge.annotation_reader" class="%phpcr_bridge.simple_annotation_reader.class%" public="false">
+            <call method="addNamespace">
+                <argument>hacfi\PHPCRBridgeBundle\Mapping</argument>
+            </call>
+        </service>
+
+        <service id="phpcr_bridge.annotation_cache" class="%phpcr_bridge.annotation_cache.class%" public="false">
+            <argument>%phpcr_bridge.cache_dir%</argument>
+            <call method="setNamespace">
+                <argument>phpcr_bridge</argument>
+            </call>
+        </service>
+
+        <service id="phpcr_bridge.metadata.provider" class="%phpcr_bridge.metadata.provider.class%">
+            <argument type="service" id="phpcr_bridge.annotation_reader"/>
+            <argument type="service" id="phpcr_bridge.annotation_cache"/>
+        </service>
+
+        <service id="phpcr_bridge.orm.event_subscriber" class="%phpcr_bridge.entity.event_subscriber.class%">
+            <tag name="doctrine.event_subscriber"/>
+            <argument type="service" id="service_container"/>
+            <argument type="service" id="doctrine_phpcr"/>
+            <argument type="service" id="phpcr_bridge.metadata.provider"/>
+        </service>
+
+        <service id="phpcr_bridge.phpcr.event_subscriber" class="%phpcr_bridge.document.event_subscriber.class%">
+            <tag name="doctrine_phpcr.event_subscriber"/>
+            <argument type="service" id="service_container"/>
+            <argument type="service" id="doctrine"/>
+            <argument type="service" id="phpcr_bridge.metadata.provider"/>
+        </service>
+    </services>
+</container>

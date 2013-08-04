@@ -1,0 +1,21 @@
+{
+    "name": "hacfi/phpcrbridge-bundle",
+    "type": "symfony-bundle",
+    "description": "hacfi PHPCRBridge Bundle",
+    "keywords": ["orm", "PHPCR", "ODM", "Database"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name":"Philipp Wahala",
+            "email":"philipp.wahala@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/framework-bundle": "~2.2"
+    },
+    "autoload": {
+        "psr-0": { "hacfi\\PHPCRBridgeBundle": "" }
+    },
+    "target-dir": "hacfi/PHPCRBridgeBundle"
+}
